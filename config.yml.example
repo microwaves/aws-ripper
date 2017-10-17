@@ -1,0 +1,15 @@
+hostname: 'host.to.be.stressed.com'
+port: '443'
+protocol: 'ssl'
+urls:
+  - '/'
+  - '/path/to/page.html'
+  - '/path/to/script.js'
+users_amount: 50
+regions:
+  eu-central-1:
+    image_id: 'ami-123456-change-me'
+    key_name: 'PLACE_YOUR_SSH_KEY_NAME'
+    security_group_id: 'sg-123456-change-me'
+    subnet_id: 'subnet-123456-change-me'
+    instances_amount: 5

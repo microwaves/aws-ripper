@@ -1,0 +1,39 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require_relative '../lib/aws_ripper'
+
+options = {}
+
+OptionParser.new do |opts|
+  opts.banner = "Usage: aws-ripper [option] [argument]"
+
+  opts.on('-s', '--start minutes', Integer, 'Start stress test on a given amount of minutes.') do |s|
+    options[:start] = s
+  end
+end.parse!
+
+if options[:start]
+  aws_ripper = AwsRipper::Base.new
+
+  puts 'Bootstrapping machines and setting up the environment...'
+  aws_ripper.prepare_environment
+  puts 'Environment is ready!'
+
+  puts 'Running stress test...'
+  thr = Thread.new { aws_ripper.stress_it }
+
+  current_time = Time.now
+  while Time.now < current_time + (options[:start] * 60); end
+
+  thr.exit
+  puts 'Test is done!'
+
+  puts 'Generating reports...'
+  aws_ripper.generate_reports
+  puts 'Reports were generated and transferred.'
+
+  puts 'Cleaning the test environment...'
+  aws_ripper.destroy_environment!
+  puts 'Environment was successfully clean! Stress test is over.'
+end
